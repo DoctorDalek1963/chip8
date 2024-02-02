@@ -1,8 +1,12 @@
 //! This module contains the [`Interpreter`] type.
 
 mod instruction;
+mod memory;
 
-use self::instruction::{decode, Instruction};
+use self::{
+    instruction::{decode, DecodingError, Instruction},
+    memory::init_memory,
+};
 use chip8_base::{Display, Interpreter, Keys, Pixel};
 use std::time::Duration;
 
@@ -46,9 +50,9 @@ impl Chip8Interpreter {
     /// Create a new instance of the interpreter.
     ///
     /// The clock frequency is measure in Hz.
-    pub fn new(clock_frequency: u64) -> Self {
+    pub fn new(rom: &[u8], clock_frequency: f32) -> Self {
         Self {
-            memory: [0; _],
+            memory: init_memory(rom),
             stack: [0; _],
             v_registers: [0; _],
             memory_register: 0,
@@ -57,7 +61,7 @@ impl Chip8Interpreter {
             program_counter: 0x200,
             stack_pointer: 0,
             display: [[Pixel::Black; _]; _],
-            speed: Duration::from_nanos(1_000_000_000 / clock_frequency),
+            speed: Duration::from_secs_f32(clock_frequency.recip()),
         }
     }
 
@@ -77,19 +81,74 @@ impl Chip8Interpreter {
     }
 
     /// Execute the given instruction.
-    fn execute(&mut self, instruction: Instruction) {
+    fn execute(&mut self, instruction: Instruction, _keys: &Keys) {
+        use self::instruction::Operand as Op;
         use Instruction as I;
 
         match instruction {
-            I::Nop => {}
+            I::ClearScreen => self.display = [[Pixel::Black; _]; _],
+            I::Jump(address) => self.program_counter = address,
+            I::LoadRegister(x, operand) => {
+                self.v_registers[x as usize] = match operand {
+                    Op::Register(y) => self.v_registers[y as usize],
+                    Op::Literal(byte) => byte,
+                }
+            }
+            I::AddNoCarry(x, byte) => {
+                self.v_registers[x as usize] = self.v_registers[x as usize].wrapping_add(byte)
+            }
+            I::LoadMemoryRegister(address) => self.memory_register = address,
+            I::Draw(x, y, n) => {
+                let first_x = (self.v_registers[x as usize] % 64) as usize;
+                let mut x = first_x;
+                let mut y = (self.v_registers[y as usize] % 32) as usize;
+                self.v_registers[0xF] = 0;
+
+                for offset in 0..n {
+                    let row = self.memory[self.memory_register as usize + offset as usize];
+                    if y >= 32 {
+                        return;
+                    }
+
+                    for pixel in (0..=7).rev().map(|pos| {
+                        if row & (1 << pos) > 0 {
+                            Pixel::White
+                        } else {
+                            Pixel::Black
+                        }
+                    }) {
+                        if x >= 64 {
+                            break;
+                        }
+
+                        let old_pixel = self.display[y][x];
+                        self.display[y][x] = old_pixel ^ pixel;
+
+                        // Set VF if the pixel was erased
+                        if old_pixel ^ pixel != old_pixel {
+                            self.v_registers[0xF] = 1;
+                        }
+                        x += 1;
+                    }
+                    x = first_x;
+                    y += 1;
+                }
+            }
+            _ => unimplemented!("Instruction {instruction:?} has not been implemented to execute"),
         };
     }
 }
 
 impl Interpreter for Chip8Interpreter {
     fn step(&mut self, keys: &Keys) -> Option<Display> {
-        let instruction = decode(self.fetch());
-        self.execute(instruction);
+        let instruction = match decode(self.fetch()) {
+            Ok(instruction) => instruction,
+            Err(DecodingError::UnrecognisedBytecode(bytecode)) => panic!(
+                "Unrecognised instruction with bytecode 0x{bytecode:0>4X} at address 0x{:0>4X}",
+                self.program_counter - 2
+            ),
+        };
+        self.execute(instruction, keys);
 
         Some(self.display)
     }
