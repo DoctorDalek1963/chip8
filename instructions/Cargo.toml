@@ -1,0 +1,13 @@
+[package]
+name = "chip8-instructions"
+version = "0.1.0"
+description = "The instructions supported by the CHIP-8 specification."
+authors.workspace = true
+edition.workspace = true
+publish.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[features]
+decode = []
+encode = []

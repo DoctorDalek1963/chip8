@@ -1,14 +1,13 @@
-[package]
-name = "chip8"
-version = "0.1.0"
-description = "A simple CHIP-8 interpreter."
+[workspace]
+resolver = "2"
+members = ["instructions", "interpreter"]
+
+[workspace.package]
 authors = ["Dyson Dyson <dyson.dyson@icloud.com>"]
 edition = "2021"
 publish = false
 repository = "https://github.com/DoctorDalek1963/chip8"
 license = "GPL-3.0"
 
-[dependencies]
-chip8_base = "0.2.0"
-clap = { version = "4.4.18", features = ["derive"] }
-rand = "0.8.5"
+[workspace.dependencies]
+chip8-instructions = { path = "./instructions" }

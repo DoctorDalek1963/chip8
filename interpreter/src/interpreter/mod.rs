@@ -1,12 +1,9 @@
 //! This module contains the [`Interpreter`] type.
 
-mod instruction;
 mod memory;
 
-use self::{
-    instruction::{decode, DecodingError, Instruction, Operand},
-    memory::init_memory,
-};
+use self::memory::init_memory;
+use chip8_instructions::{decode, DecodingError, Instruction, Operand};
 use crate::interpreter::memory::FONT_ADDRESS_START;
 use chip8_base::{Display, Interpreter, Keys, Pixel};
 use std::time::{Duration, Instant};
