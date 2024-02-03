@@ -6,6 +6,12 @@ mod decoding;
 #[cfg(feature = "decode")]
 pub use self::decoding::{decode, DecodingError};
 
+#[cfg(feature = "encode")]
+mod encoding;
+
+#[cfg(feature = "encode")]
+pub use self::encoding::encode;
+
 /// The set of instructions that are supported by the interpreter.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Instruction {
