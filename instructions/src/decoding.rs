@@ -99,14 +99,14 @@ pub fn decode(bytes: [u8; 2]) -> Result<Instruction, DecodingError> {
 mod tests {
     use super::*;
 
+    fn dec(instr: u16) -> Result<Instruction, DecodingError> {
+        decode(instr.to_be_bytes())
+    }
+
     #[test]
-    fn decode_test() {
+    fn decode_success_test() {
         use Instruction as I;
         use Operand::{Literal as Lit, Register as Reg};
-
-        fn dec(instr: u16) -> Result<Instruction, DecodingError> {
-            decode(instr.to_be_bytes())
-        }
 
         assert_eq!(dec(0x00E0), Ok(I::ClearScreen));
 
@@ -309,5 +309,17 @@ mod tests {
         assert_eq!(dec(0xF865), Ok(I::ReadRegistersFromMemory(8)));
         assert_eq!(dec(0xFC65), Ok(I::ReadRegistersFromMemory(12)));
         assert_eq!(dec(0xFE65), Ok(I::ReadRegistersFromMemory(14)));
+    }
+
+    #[test]
+    fn decode_error_test() {
+        assert_eq!(dec(0xFFFF), Err(DecodingError::UnrecognisedBytecode(0xFFFF)));
+        assert_eq!(dec(0x5931), Err(DecodingError::UnrecognisedBytecode(0x5931)));
+        assert_eq!(dec(0x5C09), Err(DecodingError::UnrecognisedBytecode(0x5C09)));
+        assert_eq!(dec(0x89DA), Err(DecodingError::UnrecognisedBytecode(0x89DA)));
+        assert_eq!(dec(0x8FFF), Err(DecodingError::UnrecognisedBytecode(0x8FFF)));
+        assert_eq!(dec(0x00CD), Err(DecodingError::UnrecognisedBytecode(0x00CD)));
+        assert_eq!(dec(0xEE09), Err(DecodingError::UnrecognisedBytecode(0xEE09)));
+        assert_eq!(dec(0xE17C), Err(DecodingError::UnrecognisedBytecode(0xE17C)));
     }
 }
