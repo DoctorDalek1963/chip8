@@ -313,13 +313,37 @@ mod tests {
 
     #[test]
     fn decode_error_test() {
-        assert_eq!(dec(0xFFFF), Err(DecodingError::UnrecognisedBytecode(0xFFFF)));
-        assert_eq!(dec(0x5931), Err(DecodingError::UnrecognisedBytecode(0x5931)));
-        assert_eq!(dec(0x5C09), Err(DecodingError::UnrecognisedBytecode(0x5C09)));
-        assert_eq!(dec(0x89DA), Err(DecodingError::UnrecognisedBytecode(0x89DA)));
-        assert_eq!(dec(0x8FFF), Err(DecodingError::UnrecognisedBytecode(0x8FFF)));
-        assert_eq!(dec(0x00CD), Err(DecodingError::UnrecognisedBytecode(0x00CD)));
-        assert_eq!(dec(0xEE09), Err(DecodingError::UnrecognisedBytecode(0xEE09)));
-        assert_eq!(dec(0xE17C), Err(DecodingError::UnrecognisedBytecode(0xE17C)));
+        assert_eq!(
+            dec(0xFFFF),
+            Err(DecodingError::UnrecognisedBytecode(0xFFFF))
+        );
+        assert_eq!(
+            dec(0x5931),
+            Err(DecodingError::UnrecognisedBytecode(0x5931))
+        );
+        assert_eq!(
+            dec(0x5C09),
+            Err(DecodingError::UnrecognisedBytecode(0x5C09))
+        );
+        assert_eq!(
+            dec(0x89DA),
+            Err(DecodingError::UnrecognisedBytecode(0x89DA))
+        );
+        assert_eq!(
+            dec(0x8FFF),
+            Err(DecodingError::UnrecognisedBytecode(0x8FFF))
+        );
+        assert_eq!(
+            dec(0x00CD),
+            Err(DecodingError::UnrecognisedBytecode(0x00CD))
+        );
+        assert_eq!(
+            dec(0xEE09),
+            Err(DecodingError::UnrecognisedBytecode(0xEE09))
+        );
+        assert_eq!(
+            dec(0xE17C),
+            Err(DecodingError::UnrecognisedBytecode(0xE17C))
+        );
     }
 }

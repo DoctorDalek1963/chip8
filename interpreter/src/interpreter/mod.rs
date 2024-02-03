@@ -3,9 +3,9 @@
 mod memory;
 
 use self::memory::init_memory;
-use chip8_instructions::{decode, DecodingError, Instruction, Operand};
 use crate::interpreter::memory::FONT_ADDRESS_START;
 use chip8_base::{Display, Interpreter, Keys, Pixel};
+use chip8_instructions::{decode, DecodingError, Instruction, Operand};
 use std::time::{Duration, Instant};
 
 /// A simple CHIP-8 interpreter.

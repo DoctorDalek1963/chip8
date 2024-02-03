@@ -440,8 +440,8 @@ mod tests {
 
     #[test]
     fn encode_error_test() {
-        use Instruction as I;
         use EncodingError as E;
+        use Instruction as I;
 
         assert_eq!(encode(I::Jump(0x1000)), Err(E::AddressTooBig(0x1000)));
         assert_eq!(encode(I::Jump(0x1234)), Err(E::AddressTooBig(0x1234)));
@@ -455,15 +455,27 @@ mod tests {
 
         assert_eq!(encode(I::AddNoCarry(16, 0x56)), Err(E::RegisterTooBig(16)));
         assert_eq!(encode(I::AddNoCarry(26, 0x01)), Err(E::RegisterTooBig(26)));
-        assert_eq!(encode(I::AddNoCarry(255, 0x50)), Err(E::RegisterTooBig(255)));
-        assert_eq!(encode(I::AddNoCarry(102, 0xC0)), Err(E::RegisterTooBig(102)));
+        assert_eq!(
+            encode(I::AddNoCarry(255, 0x50)),
+            Err(E::RegisterTooBig(255))
+        );
+        assert_eq!(
+            encode(I::AddNoCarry(102, 0xC0)),
+            Err(E::RegisterTooBig(102))
+        );
 
         assert_eq!(encode(I::AddWithCarry(16, 8)), Err(E::RegisterTooBig(16)));
         assert_eq!(encode(I::AddWithCarry(34, 3)), Err(E::RegisterTooBig(34)));
-        assert_eq!(encode(I::AddWithCarry(178, 150)), Err(E::RegisterTooBig(178)));
+        assert_eq!(
+            encode(I::AddWithCarry(178, 150)),
+            Err(E::RegisterTooBig(178))
+        );
         assert_eq!(encode(I::AddWithCarry(8, 16)), Err(E::RegisterTooBig(16)));
         assert_eq!(encode(I::AddWithCarry(3, 34)), Err(E::RegisterTooBig(34)));
-        assert_eq!(encode(I::AddWithCarry(150, 178)), Err(E::RegisterTooBig(150)));
+        assert_eq!(
+            encode(I::AddWithCarry(150, 178)),
+            Err(E::RegisterTooBig(150))
+        );
 
         assert_eq!(encode(I::Draw(1, 2, 16)), Err(E::NibbleTooBig(16)));
         assert_eq!(encode(I::Draw(9, 3, 87)), Err(E::NibbleTooBig(87)));
