@@ -1,14 +1,113 @@
 //! This module handles memory.
 
+/// The start of the font addresses. Each character sprite is 5 bytes long.
+pub const FONT_ADDRESS_START: usize = 0x50;
+
+#[rustfmt::skip]
+const FONT: [u8; 80] = [
+    0b11110000,
+    0b10010000,
+    0b10010000,
+    0b10010000,
+    0b11110000,
+
+    0b00100000,
+    0b01100000,
+    0b00100000,
+    0b00100000,
+    0b01110000,
+
+    0b11110000,
+    0b00010000,
+    0b11110000,
+    0b10000000,
+    0b11110000,
+
+    0b11110000,
+    0b00010000,
+    0b11110000,
+    0b00010000,
+    0b11110000,
+
+    0b10010000,
+    0b10010000,
+    0b11110000,
+    0b00010000,
+    0b00010000,
+
+    0b11110000,
+    0b10000000,
+    0b11110000,
+    0b00010000,
+    0b11110000,
+
+    0b11110000,
+    0b10000000,
+    0b11110000,
+    0b10010000,
+    0b11110000,
+
+    0b11110000,
+    0b00010000,
+    0b00100000,
+    0b01000000,
+    0b01000000,
+
+    0b11110000,
+    0b10010000,
+    0b11110000,
+    0b10010000,
+    0b11110000,
+
+    0b11110000,
+    0b10010000,
+    0b11110000,
+    0b00010000,
+    0b11110000,
+
+    0b11110000,
+    0b10010000,
+    0b11110000,
+    0b10010000,
+    0b10010000,
+
+    0b11100000,
+    0b10010000,
+    0b11100000,
+    0b10010000,
+    0b11100000,
+
+    0b11110000,
+    0b10000000,
+    0b10000000,
+    0b10000000,
+    0b11110000,
+
+    0b11100000,
+    0b10010000,
+    0b10010000,
+    0b10010000,
+    0b11100000,
+
+    0b11110000,
+    0b10000000,
+    0b11110000,
+    0b10000000,
+    0b11110000,
+
+    0b11110000,
+    0b10000000,
+    0b11110000,
+    0b10000000,
+    0b10000000,
+];
+
 /// Initialize a new 4k block of memory with the given rom loaded in at address 0x200.
 pub fn init_memory(rom: &[u8]) -> [u8; 4096] {
     let mut mem = [0; _];
 
-    for (offset, &byte) in rom.iter().enumerate() {
-        mem[0x200 + offset] = byte;
-    }
-
-    // TODO: Populate the font in the interpreter section of memory
+    mem[FONT_ADDRESS_START..(FONT_ADDRESS_START + FONT.len())].copy_from_slice(&FONT);
+    mem[0x200..(0x200 + rom.len())].copy_from_slice(&rom);
 
     mem
 }

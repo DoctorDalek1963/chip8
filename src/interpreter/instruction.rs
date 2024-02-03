@@ -153,7 +153,6 @@ pub fn decode(bytes: [u8; 2]) -> Result<Instruction, DecodingError> {
                 address & 0xF000 == 0,
                 "Addresses should only ever be 12 bits"
             );
-            debug_assert!(address % 2 == 0, "We should only jump to even addresses");
             I::Jump(address)
         }
         (2, n2, n3, n4) => {
@@ -162,7 +161,6 @@ pub fn decode(bytes: [u8; 2]) -> Result<Instruction, DecodingError> {
                 address & 0xF000 == 0,
                 "Addresses should only ever be 12 bits"
             );
-            debug_assert!(address % 2 == 0, "We should only call into even addresses");
             I::Call(address)
         }
         (3, x, _, _) => I::SkipIfEqual(x, Lit(b2)),
@@ -186,9 +184,6 @@ pub fn decode(bytes: [u8; 2]) -> Result<Instruction, DecodingError> {
                 address & 0xF000 == 0,
                 "Addresses should only ever be 12 bits"
             );
-
-            // The address in the memory register doesn't have to be even because it doesn't
-            // necessarily point to an instruction
             I::LoadMemoryRegister(address)
         }
         (0xB, n2, n3, n4) => {
@@ -197,9 +192,6 @@ pub fn decode(bytes: [u8; 2]) -> Result<Instruction, DecodingError> {
                 address & 0xF000 == 0,
                 "Addresses should only ever be 12 bits"
             );
-
-            // This time, address doesn't need to be even. It just needs the same parity as the
-            // value of V0, which we don't know until we execute the instruction
             I::JumpPlusV0(address)
         }
         (0xC, x, _, _) => I::LoadRandomWithMask(x, b2),
@@ -216,9 +208,9 @@ pub fn decode(bytes: [u8; 2]) -> Result<Instruction, DecodingError> {
         (0xF, x, 5, 5) => I::StoreRegistersInMemory(x),
         (0xF, x, 6, 5) => I::ReadRegistersFromMemory(x),
         _ => {
-            return Err(DecodingError::UnrecognisedBytecode(
-                (b1 as u16) << 8 + b2 as u16,
-            ))
+            return Err(DecodingError::UnrecognisedBytecode(u16::from_be_bytes([
+                b1, b2,
+            ])))
         }
     })
 }
