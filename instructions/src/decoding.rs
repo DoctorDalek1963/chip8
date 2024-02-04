@@ -27,6 +27,7 @@ pub fn decode(bytes: [u8; 2]) -> Result<Instruction, DecodingError> {
     Ok(match (n1, n2, n3, n4) {
         (0, 0, 0xE, 0) => I::ClearScreen,
         (0, 0, 0xE, 0xE) => I::Return,
+        (0, _, _, _) => I::Nop,
         (1, n2, n3, n4) => {
             let address = ((n2 as u16) << 8) + ((n3 as u16) << 4) + n4 as u16;
             debug_assert!(
@@ -107,6 +108,11 @@ mod tests {
     fn decode_success_test() {
         use Instruction as I;
         use Operand::{Literal as Lit, Register as Reg};
+
+        assert_eq!(dec(0x0000), Ok(I::Nop));
+        assert_eq!(dec(0x0123), Ok(I::Nop));
+        assert_eq!(dec(0x0FFF), Ok(I::Nop));
+        assert_eq!(dec(0x07D3), Ok(I::Nop));
 
         assert_eq!(dec(0x00E0), Ok(I::ClearScreen));
 

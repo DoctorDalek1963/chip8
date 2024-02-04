@@ -44,6 +44,7 @@ pub fn encode(instuction: Instruction) -> Result<[u8; 2], EncodingError> {
     use Operand::{Literal as Lit, Register as Reg};
 
     Ok(u16::to_be_bytes(match instuction {
+        I::Nop => 0x0000,
         I::ClearScreen => 0x00E0,
         I::Return => 0x00EE,
         I::Jump(address) => {
@@ -234,6 +235,8 @@ mod tests {
         fn enc(instr: I) -> Result<u16, EncodingError> {
             encode(instr).map(u16::from_be_bytes)
         }
+
+        assert_eq!(enc(I::Nop), Ok(0x0000));
 
         assert_eq!(enc(I::ClearScreen), Ok(0x00E0));
 

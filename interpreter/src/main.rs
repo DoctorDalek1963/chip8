@@ -5,9 +5,8 @@
 
 mod interpreter;
 
-use std::fs;
-
 use clap::Parser;
+use std::fs;
 
 /// Execute a ROM with a simple CHIP-8 interpreter.
 #[derive(Parser)]

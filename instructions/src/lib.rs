@@ -15,6 +15,9 @@ pub use self::encoding::encode;
 /// The set of instructions that are supported by the interpreter.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Instruction {
+    /// Do nothing.
+    Nop,
+
     /// Clear the display.
     ClearScreen,
 
