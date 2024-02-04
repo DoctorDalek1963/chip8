@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["instructions", "interpreter"]
+members = ["assembler", "instructions", "interpreter"]
 
 [workspace.package]
 authors = ["Dyson Dyson <dyson.dyson@icloud.com>"]
