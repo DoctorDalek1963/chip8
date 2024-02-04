@@ -4,8 +4,8 @@
 ; Comments start with semicolons
 start:				; labels are identifiers followed by colons
 	CLS
-	JP	start
-	JP	#123		; Hexadecimal numbers are preceded by # symbols
+	JMP	start
+	JMP	#123		; Hexadecimal numbers are preceded by # symbols
 	JP	v0, #123
 	JP	v0, end
 	call end
@@ -40,40 +40,30 @@ end:
 	ld ST, V5
 	ld F, V5
 	ld B, V5
-	ld [I], VA
-	ld VA, [I]
+	stor VA
+	rstr VA
+	;ld [I], VA
+	;ld VA, [I]
 
 ; "define" can be used to define constants
 define aaa #222
-	jp aaa
+	jmp aaa
 
 ; "define" can also be used to define aliases for registers
 define bbb vd
 	ld bbb, %01010101	; Binary literals start with % symbols
-	JP %101001010101
-	JP x
+	JMP %101001010101
+	JMP x
 	LD I, x
 
-; SCHIP instructions are supported
-	SCD	#4
-	SCL
-	SCR
-	EXIT
-	HIGH
-	LOW
-	DRW V1, V2, 0
-	LD HF, V5
-	LD R, V6
-	LD V7, R
-
 ; Offset moves the location where output is generated
-offset #280
+;offset #280
 
 ; This is how you can define sprites:
 ; "db" emits raw bytes, separated by commas.
 ; "dw" can emit 16-bit words.
 
-x: db #11, #22, #33, #44
+x: dw #1122, #3344
 y: db
 	%00100100,
 	%11111111,
@@ -91,7 +81,9 @@ string1:
 ; db #68, #65, #6C, #6C, #6F, #00
 
 ; The string can also contain special symbols escaped with '\'
-string2: text "\"\e\r\n"
+;string2: text "\"\e\r\n"
 
 ; This is how you can include another file:
 include "font2.asm"
+
+;@something
