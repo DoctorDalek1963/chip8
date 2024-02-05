@@ -1,10 +1,13 @@
 //! This module contains token definitions.
 
+use crate::span::WithSpan;
+
+pub type TokenSpan<'s> = WithSpan<Token<'s>>;
+
 /// A list of all the tokens supported by this CHIP-8 assembly.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum Token<'s> {
     Colon,
-    Comma,
     Identifier(&'s str),
     InstructionName(InstructionName),
     GeneralRegisterName(GeneralRegisterName),

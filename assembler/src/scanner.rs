@@ -59,12 +59,6 @@ impl<'s> Scanner<'s> {
         self.source.chars().nth(self.current)
     }
 
-    /// Return the char after the one pointed to by `self.current`.
-    #[inline]
-    fn next_char(&self) -> Option<char> {
-        self.source.chars().nth(self.current + 1)
-    }
-
     /// Advance the internal pointer.
     fn advance(&mut self) -> char {
         let c = self.current_char().unwrap_or_else(|| {
@@ -85,16 +79,6 @@ impl<'s> Scanner<'s> {
         });
     }
 
-    /// Conditionally [`advance`](Self::advance) if the next char is the expected one.
-    fn match_char(&mut self, expected: char) -> bool {
-        if self.is_at_end() || (self.current_char() != Some(expected)) {
-            false
-        } else {
-            self.current += 1;
-            true
-        }
-    }
-
     /// Report the given error message with the current span.
     fn report_error(&self, message: &str) {
         crate::error::report_error(self.current_span(), message);
@@ -111,7 +95,7 @@ impl<'s> Scanner<'s> {
                 }
             }
             ':' => self.add_token(Token::Colon),
-            ',' => self.add_token(Token::Comma),
+            ',' => {} // Ignore commas
             '"' => self.scan_string(),
             '0'..='9' => self.scan_decimal_number(),
             '%' => self.scan_binary_number(),

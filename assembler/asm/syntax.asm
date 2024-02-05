@@ -23,10 +23,8 @@ end:
 	or V2, v3
 	and VA, vb
 	xor VA, vb
-	shr VA, vb
 	shr VA
 	subn VA, vb
-	shl VA, vb
 	shl VA
 	rnd VD, #FF
 	drw VE, VF, #4
@@ -36,10 +34,10 @@ end:
 	ld I, #AAA
 	ld V5, DT
 	ld V5, K
-	ld DT, V5
-	ld ST, V5
-	ld F, V5
-	ld B, V5
+	delay V5
+	delay V5
+	font V5
+	bcd V5
 	stor VA
 	rstr VA
 	;ld [I], VA
@@ -85,5 +83,3 @@ string1:
 
 ; This is how you can include another file:
 include "font2.asm"
-
-;@something

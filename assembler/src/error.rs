@@ -41,7 +41,7 @@ enum SeverityLevel {
     Warning,
 }
 
-/// Report an error before runtime.
+/// Report an error.
 pub fn report_error(span: Span, message: &str) {
     print_error_message(Some(span), message, SeverityLevel::Error);
     HAD_ERROR.store(true, Ordering::Relaxed);

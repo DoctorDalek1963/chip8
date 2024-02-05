@@ -1,18 +1,22 @@
 //! This is a simple assembler for a simple CHIP-8 assembly language. See the README for more
 //! details.
 
+mod ast;
 mod error;
+mod parser;
 mod scanner;
 mod span;
 mod tokens;
 
-use self::scanner::Scanner;
-use crate::error::{init_error_reporting, HAD_ERROR};
-use clap::Parser;
+use crate::{
+    error::{init_error_reporting, HAD_ERROR},
+    parser::Parser,
+    scanner::Scanner,
+};
 use color_eyre::{Report, Result};
 use std::{fs, sync::atomic::Ordering};
 
-#[derive(Parser)]
+#[derive(clap::Parser)]
 #[command(author, version, about)]
 struct Args {
     /// The filename of the code to assemble.
@@ -24,9 +28,9 @@ struct Args {
 }
 
 fn main() -> Result<()> {
-    let args = Args::parse();
+    let args = <Args as clap::Parser>::parse();
 
-    let input = fs::read_to_string(args.file)?;
+    let input = fs::read_to_string(args.file)?.replace("\t", "    ");
     init_error_reporting(input.clone());
     let lowercase_input = input.to_ascii_lowercase();
 
@@ -37,9 +41,13 @@ fn main() -> Result<()> {
     }
 
     dbg!(tokens
-        .into_iter()
+        .iter()
         .map(|crate::span::WithSpan { span: _, value }| value)
         .collect::<Vec<_>>());
+
+    let unresolved_ast = Parser::parse(tokens);
+
+    dbg!(unresolved_ast);
 
     Ok(())
 }

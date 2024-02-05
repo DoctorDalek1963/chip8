@@ -301,6 +301,7 @@ dependencies = [
  "color-eyre",
  "crossterm",
  "lazy_static",
+ "thiserror",
 ]
 
 [[package]]

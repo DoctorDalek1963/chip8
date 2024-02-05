@@ -38,18 +38,6 @@ impl Span {
     pub fn mut_union(&mut self, other: &Self) {
         *self = self.union(other);
     }
-
-    pub fn between(left: &Self, right: &Self) -> Self {
-        assert!(
-            left.start <= right.end,
-            "It doesn't make sense to get the span between left ({left:?}) and right ({right:?})"
-        );
-
-        Self {
-            start: left.start,
-            end: right.end,
-        }
-    }
 }
 
 /// Wrap a value with a [`Span`].
