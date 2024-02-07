@@ -1,20 +1,24 @@
 //! This module handles encoding instructions to bytecode.
 
 use crate::{Instruction, Operand};
+use thiserror::Error;
 
 /// A potential error when encoding.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Error)]
 pub enum EncodingError {
     /// CHIP-8 has 12-bit addresses. This error means the given address was too big.
+    #[error("This address is more than 12 bits: 0x{0:0>4X}")]
     AddressTooBig(u16),
 
     /// There are only 16 registers in CHIP-8. This error means the given register number was too
     /// big.
+    #[error("This address is more than 8 bits: 0x{0:0>2X}")]
     RegisterTooBig(u8),
 
     /// A nibble is only four bits, but the smallest integer type in Rust is 8 bits. This error
     /// means a `u8` that was expected to be a nibble was too big. This error is only produced when
     /// trying to encode [`Instruction::Draw`].
+    #[error("This number should be one nibble: 0x{0:0>2X}")]
     NibbleTooBig(u8),
 }
 
@@ -38,12 +42,12 @@ fn assert_reg(reg: u8) -> Result<(), EncodingError> {
     }
 }
 
-/// Encode an instructio into a pair of bytes.
-pub fn encode(instuction: Instruction) -> Result<[u8; 2], EncodingError> {
+/// Encode an instruction into a pair of bytes.
+pub fn encode(instruction: Instruction) -> Result<[u8; 2], EncodingError> {
     use Instruction as I;
     use Operand::{Literal as Lit, Register as Reg};
 
-    Ok(u16::to_be_bytes(match instuction {
+    Ok(u16::to_be_bytes(match instruction {
         I::Nop => 0x0000,
         I::ClearScreen => 0x00E0,
         I::Return => 0x00EE,

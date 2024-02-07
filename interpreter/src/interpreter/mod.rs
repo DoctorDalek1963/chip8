@@ -95,10 +95,6 @@ impl Chip8Interpreter {
 
     /// Fetch the next instruction from memory.
     fn fetch(&mut self) -> [u8; 2] {
-        //debug_assert!(
-        //self.program_counter % 2 == 0,
-        //"The program counter must be even"
-        //);
         let instruction = [
             self.memory[self.program_counter as usize],
             self.memory[self.program_counter as usize + 1],
@@ -113,6 +109,7 @@ impl Chip8Interpreter {
         use Instruction as I;
 
         match instruction {
+            I::Nop => (),
             I::ClearScreen => self.display = [[Pixel::Black; _]; _],
             I::Return => {
                 self.stack_pointer = self
