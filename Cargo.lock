@@ -317,6 +317,9 @@ dependencies = [
 [[package]]
 name = "chip8-instructions"
 version = "0.1.0"
+dependencies = [
+ "thiserror",
+]
 
 [[package]]
 name = "chip8_base"

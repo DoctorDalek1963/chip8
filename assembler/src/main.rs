@@ -2,6 +2,7 @@
 //! details.
 
 mod ast;
+mod codegen;
 mod error;
 mod parser;
 mod scanner;
@@ -9,6 +10,7 @@ mod span;
 mod tokens;
 
 use crate::{
+    codegen::codegen,
     error::{init_error_reporting, HAD_ERROR},
     parser::Parser,
     scanner::Scanner,
@@ -40,14 +42,15 @@ fn main() -> Result<()> {
         return Err(Report::msg("Failed to tokenise input"));
     }
 
-    dbg!(tokens
-        .iter()
-        .map(|crate::span::WithSpan { span: _, value }| value)
-        .collect::<Vec<_>>());
+    let statements = Parser::parse(tokens);
 
-    let unresolved_ast = Parser::parse(tokens);
+    // TODO: Handle Include directives
 
-    dbg!(unresolved_ast);
-
-    Ok(())
+    match codegen(statements) {
+        Ok(final_binary) => {
+            fs::write(args.output, final_binary)?;
+            Ok(())
+        }
+        Err(error) => Err(Report::msg(format!("{error}"))),
+    }
 }

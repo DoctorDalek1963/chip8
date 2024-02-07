@@ -10,7 +10,7 @@ pub use self::decoding::{decode, DecodingError};
 mod encoding;
 
 #[cfg(feature = "encode")]
-pub use self::encoding::encode;
+pub use self::encoding::{encode, EncodingError};
 
 /// The set of instructions that are supported by the interpreter.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
