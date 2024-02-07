@@ -5,9 +5,9 @@
 start:				; labels are identifiers followed by colons
 	CLS
 	JMP	start
-	JMP	#123		; Hexadecimal numbers are preceded by # symbols
-	JP	v0, #123
-	JP	v0, end
+	JP	#123		; Hexadecimal numbers are preceded by # symbols
+	JMPP	v0, #123
+	JPP v0, end
 	call end
 	call #203
 	se V1, #AA

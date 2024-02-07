@@ -28,6 +28,7 @@ pub enum InstructionName {
     Cls,
     Ret,
     Jmp,
+    Jmpp,
     Call,
     Se,
     Sne,

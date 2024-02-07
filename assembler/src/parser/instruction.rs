@@ -50,12 +50,18 @@ impl<'s> Parser<'s> {
             IN::Nop => (PI::Nop, None),
             IN::Cls => (PI::Cls, None),
             IN::Ret => (PI::Ret, None),
-            IN::Jmp => self
-                .parse_jump(instr_span)
-                .map(|(pi, span)| (pi, Some(span)))?,
+            IN::Jmp => {
+                let (addr, span) = self.parse_arg_addr(instr_span)?;
+                (PI::Jmp(addr), Some(span))
+            }
+            IN::Jmpp => {
+                let (reg, reg_span) = self.parse_arg_general_register(instr_span)?;
+                let (addr, addr_span) = self.parse_arg_addr(instr_span.union(&reg_span))?;
+                (PI::JmpPlus(reg, addr), Some(reg_span.union(&addr_span)))
+            }
             IN::Call => {
-                let (word, span) = self.parse_arg_addr(instr_span)?;
-                (PI::Call(word), Some(span))
+                let (addr, span) = self.parse_arg_addr(instr_span)?;
+                (PI::Call(addr), Some(span))
             }
             IN::Se => {
                 let (r1, r1_span) = self.parse_arg_general_register(instr_span)?;
@@ -201,31 +207,6 @@ impl<'s> Parser<'s> {
                 previous_span: Some(previous_span),
                 message: "Expected alias or general register name for this argument".to_string(),
             }),
-        }
-    }
-
-    fn parse_jump(&mut self, instr_span: Span) -> ParseResult<'s, (PI<'s>, Span)> {
-        match self.parse_arg_general_register(instr_span) {
-            Ok((reg, reg_span)) => {
-                match self.parse_arg_addr(instr_span.union(&reg_span)) {
-                    Ok((word, word_span)) => {
-                        Ok((PI::JmpPlus(reg, word), reg_span.union(&word_span)))
-                    }
-                    Err(error) => match reg {
-                        // This alias is probably a word alias rather than a register
-                        OrAlias::Alias(name) => {
-                            self.step_back();
-                            return Ok((PI::Jmp(OrAlias::Alias(name)), reg_span));
-                        }
-                        OrAlias::Concrete(_) => return Err(error),
-                    },
-                }
-            }
-            Err(_) => {
-                self.step_back();
-                let (word, span) = self.parse_arg_addr(instr_span)?;
-                Ok((PI::Jmp(word), span))
-            }
         }
     }
 
