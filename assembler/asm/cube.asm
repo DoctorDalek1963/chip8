@@ -7,6 +7,7 @@ define oldx V2 ; Previous sprite X,Y position
 define oldy V3
 define dirx V4 ; Sprite direction
 define diry V5
+define idler V6
 define tmp VE
 
 ; Clear the screen
@@ -27,6 +28,14 @@ loop:
 	; Store the current position
 LD oldx, boxx
 LD oldy, boxy
+
+; Delay for a little while between frames
+ld idler, 4
+delay idler
+idle:
+ld idler, DT
+se idler, 0
+jmp idle
 
 	; If the X direction is 0, go to sub1...
 SE dirx, 0
