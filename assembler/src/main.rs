@@ -16,6 +16,8 @@ use crate::{
     scanner::Scanner,
 };
 use color_eyre::{Report, Result};
+use error::report_error;
+use span::WithSpan;
 use std::{fs, sync::atomic::Ordering};
 
 #[derive(clap::Parser)]
@@ -51,6 +53,10 @@ fn main() -> Result<()> {
             fs::write(args.output, final_binary)?;
             Ok(())
         }
-        Err(error) => Err(Report::msg(format!("{error}"))),
+        Err(WithSpan { value: error, span }) => {
+            let message = format!("{error}");
+            report_error(span, &message);
+            Err(Report::msg(message))
+        }
     }
 }

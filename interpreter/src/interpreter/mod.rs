@@ -122,6 +122,10 @@ impl Chip8Interpreter {
             I::Call(address) => {
                 self.stack[self.stack_pointer as usize] = self.program_counter;
                 self.stack_pointer += 1;
+                assert!(
+                    self.stack_pointer <= 15,
+                    "The stack can only contain 16 addresses"
+                );
                 self.program_counter = address;
             }
             I::SkipIfEqual(x, op) => {
