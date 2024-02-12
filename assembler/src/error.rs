@@ -31,33 +31,16 @@ pub fn init_error_reporting(code: String) {
     *SOURCE_CODE.write().unwrap() = code;
 }
 
-/// The level of severity in an error/warning message.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-enum SeverityLevel {
-    /// A fatal error.
-    Error,
-
-    /// A non-fatal warning.
-    Warning,
-}
-
 /// Report an error.
 pub fn report_error(span: Span, message: &str) {
-    print_error_message(Some(span), message, SeverityLevel::Error);
+    print_error_message(Some(span), message);
     HAD_ERROR.store(true, Ordering::Relaxed);
 }
 
-/// Report a non-fatal warning.
-pub fn report_warning(span: Span, message: &str) {
-    print_error_message(Some(span), message, SeverityLevel::Warning);
-}
-
 /// Print the given error message.
-fn print_error_message(span: Option<Span>, message: &str, level: SeverityLevel) {
-    let (highlight_color, severity_name) = match level {
-        SeverityLevel::Error => (Color::Red, "ERROR"),
-        SeverityLevel::Warning => (Color::Yellow, "WARNING"),
-    };
+fn print_error_message(span: Option<Span>, message: &str) {
+    let highlight_color = Color::Red;
+    let severity_name = "ERROR";
 
     let message = if let Some(span) = span {
         let (start_line, start_nl) = LINE_OFFSETS
