@@ -1,22 +1,21 @@
 ; Draw a basic heart to the screen
 ; A direction of 0 means up and 1 means down
 
-define x v0
-define ly v1
-define ry v2
+define ly v0
+define ry v1
 define slen 14
-define ldir v3
-define rdir v4
+define ldir v2
+define rdir v3
 define waitnum vc
 define tmp vd
 define one ve
 
-ld ve 1
 ld ly 6
 ld ry 6
 ld ldir 0
 ld rdir 1
 ld waitnum 6
+ld one 1
 
 mainloop:
 cls
@@ -84,21 +83,21 @@ jmp wait
 jmp mainloop
 
 ; Draw the left half of the heart.
-; Modifies: I, x
+; Modifies: I, tmp
 ; Needs set: ly
 drawleft:
 	ld I, lefthalf
-	ld x, 23
-	draw x, ly, slen
+	ld tmp, 23
+	draw tmp, ly, slen
 	ret
 
 ; Draw the right half of the heart.
-; Modifies: I, x
+; Modifies: I, tmp
 ; Needs set: ry
 drawright:
 	ld I, righthalf
-	ld x, 31
-	draw x, ry, slen
+	ld tmp, 31
+	draw tmp, ry, slen
 	ret
 
 ; Test for every key being pressed and set the waitnum register if a new key is pressed
