@@ -1,22 +1,174 @@
 ; Draw a basic heart to the screen
+; A direction of 0 means up and 1 means down
 
+define x v0
+define ly v1
+define ry v2
+define slen 14
+define ldir v3
+define rdir v4
+define waitnum vc
+define tmp vd
+define one ve
+
+ld ve 1
+ld ly 6
+ld ry 6
+ld ldir 0
+ld rdir 1
+ld waitnum 6
+
+mainloop:
 cls
+call drawleft
+se ldir 0
+jmp moveleftdown
 
-; Draw the left half of the heart
-ld I, lefthalf
-ld v0, 23
-ld v1, 7
-draw v0, v1, 14
+moveleftup:
+sub ly one
+jmp skipmoveleftdown
+moveleftdown:
+add ly one
+skipmoveleftdown:
 
-; Draw the right half of the heart
-ld I, righthalf
-ld v0, 31
-ld v1, 7
-draw v0, v1, 14
+call drawright
+se rdir 0
+jmp moverightdown
+
+moverightup:
+sub ry one
+jmp skipmoverightdown
+moverightdown:
+add ry one
+skipmoverightdown:
+
+; If ldir == 1 && ly + slen == 32, then set ldir = 0
+se ldir 1
+jmp skipleftatbottom
+ld tmp ly
+add tmp slen
+sne tmp 32
+ld ldir 0
+skipleftatbottom:
+
+; If ldir == 0 && ly == 0, then set ldir = 1
+se ldir 0
+jmp skipleftattop
+sne ly 0
+ld ldir 1
+skipleftattop:
+
+; If rdir == 1 && ry + slen == 32, then set rdir = 0
+se rdir 1
+jmp skiprightatbottom
+ld tmp ry
+add tmp slen
+sne tmp 32
+ld rdir 0
+skiprightatbottom:
+
+; If rdir == 0 && ry == 0, then set rdir = 1
+se rdir 0
+jmp skiprightattop
+sne ry 0
+ld rdir 1
+skiprightattop:
 
 ; Loop forever
-spin:
-jmp spin
+call setwaitnum
+delay waitnum
+wait:
+ld vf dt
+se vf 0
+jmp wait
+jmp mainloop
+
+; Draw the left half of the heart.
+; Modifies: I, x
+; Needs set: ly
+drawleft:
+	ld I, lefthalf
+	ld x, 23
+	draw x, ly, slen
+	ret
+
+; Draw the right half of the heart.
+; Modifies: I, x
+; Needs set: ry
+drawright:
+	ld I, righthalf
+	ld x, 31
+	draw x, ry, slen
+	ret
+
+; Test for every key being pressed and set the waitnum register if a new key is pressed
+; Modifies: waitnum, tmp
+setwaitnum:
+	ld tmp 0
+	sknp tmp
+	ld waitnum 0
+
+	ld tmp 1
+	sknp tmp
+	ld waitnum 1
+
+	ld tmp 2
+	sknp tmp
+	ld waitnum 2
+
+	ld tmp 3
+	sknp tmp
+	ld waitnum 3
+
+	ld tmp 4
+	sknp tmp
+	ld waitnum 4
+
+	ld tmp 5
+	sknp tmp
+	ld waitnum 5
+
+	ld tmp 6
+	sknp tmp
+	ld waitnum 6
+
+	ld tmp 7
+	sknp tmp
+	ld waitnum 7
+
+	ld tmp 8
+	sknp tmp
+	ld waitnum 8
+
+	ld tmp 9
+	sknp tmp
+	ld waitnum 9
+
+	ld tmp 10
+	sknp tmp
+	ld waitnum 10
+
+	ld tmp 11
+	sknp tmp
+	ld waitnum 11
+
+	ld tmp 12
+	sknp tmp
+	ld waitnum 12
+
+	ld tmp 13
+	sknp tmp
+	ld waitnum 13
+
+	ld tmp 14
+	sknp tmp
+	ld waitnum 14
+
+	ld tmp 15
+	sknp tmp
+	ld waitnum 15
+
+	ret
 
 lefthalf:
 db  %00111100,
