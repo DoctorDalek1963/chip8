@@ -209,16 +209,16 @@ impl Chip8Interpreter {
                     y += 1;
                 }
             }
-            I::SkipIfKeyPressed(x) => {
-                if keys[self.reg(x) as usize] {
-                    self.program_counter += 2;
-                }
-            }
-            I::SkipIfKeyNotPressed(x) => {
-                if !keys[self.reg(x) as usize] {
-                    self.program_counter += 2;
-                }
-            }
+            I::SkipIfKeyPressed(x) => match keys.get(self.reg(x) as usize) {
+                Some(true) => self.program_counter += 2,
+                None => panic!("The only valid keys are 0-15, not {}", self.reg(x)),
+                Some(false) => (),
+            },
+            I::SkipIfKeyNotPressed(x) => match keys.get(self.reg(x) as usize) {
+                Some(false) => self.program_counter += 2,
+                None => panic!("The only valid keys are 0-15, not {}", self.reg(x)),
+                Some(true) => (),
+            },
             I::LoadFromDelayTimer(x) => *self.mut_reg(x) = self.delay_timer,
             I::WaitForKeyPress(x) => self.waiting_for_key_press = Some(x),
             I::LoadIntoDelayTimer(x) => self.delay_timer = self.reg(x),
